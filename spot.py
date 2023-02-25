@@ -17,4 +17,21 @@ while True:
     lst.append(response['items']) 
     offset=offset+len(response['items']) 
     #print(offset,"/",response['total'])
-print(lst)
+#artist name 
+#print(lst[0][1]['track']['artists'][0]['name'])
+#print(lst[0][1]['track']['duration_ms'])
+artist_name_List = [] 
+duration_List = [] 
+explicit_List = [] 
+track_name_list = [] 
+for i in range(len(lst)): 
+    for k in range(len(lst[i])): 
+        artist_name_List.append(lst[i][k]['track']['artists'][0]['name'])
+        duration_List.append(lst[i][k]['track']['duration_ms'])
+        explicit_List.append(lst[i][k]['track']['explicit']) 
+        track_name_list.append(lst[i][k]['track']['name'])
+spotify_df = pd.DataFrame({'Artist_name':artist_name_List,
+                           'Song_name':track_name_list,
+                           'explicit':explicit_List,
+                           'Song_duration':track_name_list}) 
+#spotify_df.to_csv('spotify.csv',index=False)
