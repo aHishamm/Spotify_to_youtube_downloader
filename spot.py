@@ -1,10 +1,13 @@
 import spotipy
+import os 
 from spotipy.oauth2 import SpotifyClientCredentials
 import pandas as pd 
 from pprint import pprint
 from pytube import YouTube 
 import datetime 
 from youtube_search import YoutubeSearch
+
+curr_directory = os.getcwd()
 lst = [] 
 youtube_video_list = [] 
 artist_name_List = [] 
@@ -13,7 +16,6 @@ explicit_List = []
 track_name_list = [] 
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id="",
                                                            client_secret=""))
-
 offset=0
 while True: 
     response = sp.playlist_items('https://open.spotify.com/playlist/1qC1eY5Z8W1eaCa6qcHwwa?si=da8a5c8f659d43eb',
@@ -39,17 +41,12 @@ for i in range(len(spotify_df)):
     result = YoutubeSearch(spotify_df["Artist_name"][i]+' - '+spotify_df["Song_name"][i],max_results=1).to_dict() 
     youtube_video_list.append('https://www.youtube.com'+result[0]['url_suffix']) 
     print("Song: "+str(i+1)+" link appended.")
-print(youtube_video_list)
 spotify_df['links'] = youtube_video_list
 print(spotify_df)
-
 #Loop through the links inside the dataframe and download the videos 
 for i in range(len(spotify_df['links'])): 
     yt_link = YouTube(spotify_df['links'][i]) 
     #stream_links = yt_link.streams.filter(file_extension='mp4',res="1080p")
     #stream_links[0].download() 
     stream_link = yt_link.streams.get_audio_only(subtype = "mp4")
-    stream_link.download() 
-
-
-#spotify_df.to_csv('spotify.csv',index=False)
+    stream_link.download(os.getcwd()+'/downloads') 
