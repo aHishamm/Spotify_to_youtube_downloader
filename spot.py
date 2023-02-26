@@ -21,13 +21,8 @@ while True:
                                  additional_types=['track']) 
     if len(response['items']) == 0: 
         break 
-    #pprint(response['items']) 
     lst.append(response['items']) 
     offset=offset+len(response['items']) 
-    #print(offset,"/",response['total'])
-#artist name 
-#print(lst[0][1]['track']['artists'][0]['name'])
-#print(lst[0][1]['track']['duration_ms'])
 for i in range(len(lst)): 
     for k in range(len(lst[i])): 
         artist_name_List.append(lst[i][k]['track']['artists'][0]['name'])
