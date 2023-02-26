@@ -43,10 +43,7 @@ for i in range(len(spotify_df)):
     print("Song: "+str(i+1)+" link appended.")
 spotify_df['links'] = youtube_video_list
 print(spotify_df)
-#Loop through the links inside the dataframe and download the videos 
 for i in range(len(spotify_df['links'])): 
     yt_link = YouTube(spotify_df['links'][i]) 
-    #stream_links = yt_link.streams.filter(file_extension='mp4',res="1080p")
-    #stream_links[0].download() 
     stream_link = yt_link.streams.get_audio_only(subtype = "mp4")
     stream_link.download(os.getcwd()+'/downloads') 
