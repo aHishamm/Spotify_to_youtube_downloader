@@ -15,7 +15,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id="",
 
 offset=0
 while True: 
-    response = sp.playlist_items('https://open.spotify.com/playlist/1qC1eY5Z8W1eaCa6qcHwwa?si=ae92dca2fb6c4bef',
+    response = sp.playlist_items('https://open.spotify.com/playlist/0Z1vuQhvq7ghRieQurJIYg?si=e3802f3a94134ce8',
                                  offset=offset,
                                  fields='items.track.name,items.track.explicit,items.track.duration_ms,items.track.artists.name',
                                  additional_types=['track']) 
@@ -42,7 +42,8 @@ spotify_df['Song_duration'] = spotify_df['Song_duration'].apply(lambda x: (str(d
 for i in range(len(spotify_df)): 
     result = YoutubeSearch(spotify_df["Artist_name"][i]+' - '+spotify_df["Song_name"][i],max_results=1).to_dict() 
     youtube_video_list.append('https://www.youtube.com'+result[0]['url_suffix']) 
+    print("Song: "+str(i+1)+" link appended.")
 print(youtube_video_list)
 spotify_df['links'] = youtube_video_list
 print(spotify_df)
-#spotify_df.to_csv('spotify.csv',index=False)
+spotify_df.to_csv('spotify.csv',index=False)
