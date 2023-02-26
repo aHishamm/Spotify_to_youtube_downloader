@@ -18,7 +18,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id="",
                                                            client_secret=""))
 offset=0
 while True: 
-    response = sp.playlist_items('https://open.spotify.com/playlist/1qC1eY5Z8W1eaCa6qcHwwa?si=da8a5c8f659d43eb',
+    response = sp.playlist_items('https://open.spotify.com/playlist/06nCnFleSnICm361INooIf?si=90609371ae11417d',
                                  offset=offset,
                                  fields='items.track.name,items.track.explicit,items.track.duration_ms,items.track.artists.name',
                                  additional_types=['track']) 
@@ -40,10 +40,15 @@ spotify_df['Song_duration'] = spotify_df['Song_duration'].apply(lambda x: (str(d
 for i in range(len(spotify_df)): 
     result = YoutubeSearch(spotify_df["Artist_name"][i]+' - '+spotify_df["Song_name"][i],max_results=1).to_dict() 
     youtube_video_list.append('https://www.youtube.com'+result[0]['url_suffix']) 
-    print("Song: "+str(i+1)+" link appended.")
+    print("Song: "+str(i+1)+" link added.")
 spotify_df['links'] = youtube_video_list
 print(spotify_df)
 for i in range(len(spotify_df['links'])): 
     yt_link = YouTube(spotify_df['links'][i]) 
+    print(yt_link)
+    #condition to avoid 'streamingData' keyError 
+    if(yt_link.age_restricted):
+        continue
     stream_link = yt_link.streams.get_audio_only(subtype = "mp4")
+    print("Song: "+str(i+1)+" downloaded.")
     stream_link.download(os.getcwd()+'/downloads') 
