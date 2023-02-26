@@ -4,4 +4,5 @@
 conda create -n spotify python==3.10
 conda activate spotify
 pip install -r requirements.txt 
-```
+```  
+run spot.py
