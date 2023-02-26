@@ -1,7 +1,8 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import pandas as pd 
-from pprint import pprint 
+from pprint import pprint
+from pytube import YouTube 
 import datetime 
 from youtube_search import YoutubeSearch
 lst = [] 
@@ -15,7 +16,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id="",
 
 offset=0
 while True: 
-    response = sp.playlist_items('https://open.spotify.com/playlist/0Z1vuQhvq7ghRieQurJIYg?si=e3802f3a94134ce8',
+    response = sp.playlist_items('https://open.spotify.com/playlist/1qC1eY5Z8W1eaCa6qcHwwa?si=da8a5c8f659d43eb',
                                  offset=offset,
                                  fields='items.track.name,items.track.explicit,items.track.duration_ms,items.track.artists.name',
                                  additional_types=['track']) 
@@ -41,4 +42,12 @@ for i in range(len(spotify_df)):
 print(youtube_video_list)
 spotify_df['links'] = youtube_video_list
 print(spotify_df)
-spotify_df.to_csv('spotify.csv',index=False)
+
+#Loop through the links inside the dataframe and download the videos 
+for i in range(len(spotify_df['links'])): 
+    yt_link = YouTube(spotify_df['links'][i]) 
+    stream_links = yt_link.streams.filter(file_extension='mp4',res="1080p")
+    stream_links[0].download() 
+
+
+#spotify_df.to_csv('spotify.csv',index=False)
