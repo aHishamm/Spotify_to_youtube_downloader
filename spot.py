@@ -7,7 +7,17 @@ from pytube import YouTube
 import datetime 
 from youtube_search import YoutubeSearch
 import gradio as gr 
-def SpotifyBackend(cli_id,cli_secret,spotify_link):
+from dotenv import load_dotenv
+load_dotenv() 
+
+CLIENT_ID = os.getenv("CLIENT_ID") 
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+
+def addyoutubelink(df): 
+    result = YoutubeSearch(df["Artist_name"]+' - '+df["Song_name"],max_results=1).to_dict()
+    return 'https://www.youtube.com'+result[0]['url_suffix']
+
+def SpotifyBackend(spotify_link):
     curr_directory = os.getcwd()
     lst = [] 
     youtube_video_list = [] 
@@ -15,8 +25,8 @@ def SpotifyBackend(cli_id,cli_secret,spotify_link):
     duration_List = [] 
     explicit_List = [] 
     track_name_list = [] 
-    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=cli_id,
-                                                               client_secret=cli_secret))
+    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=CLIENT_ID,
+                                                               client_secret=CLIENT_SECRET))
     offset=0
     while True: 
         response = sp.playlist_items(spotify_link,
@@ -38,11 +48,7 @@ def SpotifyBackend(cli_id,cli_secret,spotify_link):
                                'explicit':explicit_List,
                                'Song_duration':duration_List}) 
     spotify_df['Song_duration'] = spotify_df['Song_duration'].apply(lambda x: (str(datetime.timedelta(minutes=x/60000))[2:7]))
-    for i in range(len(spotify_df)): 
-        result = YoutubeSearch(spotify_df["Artist_name"][i]+' - '+spotify_df["Song_name"][i],max_results=1).to_dict() 
-        youtube_video_list.append('https://www.youtube.com'+result[0]['url_suffix']) 
-        print("Song: "+str(i+1)+" link added.")
-    spotify_df['links'] = youtube_video_list
+    spotify_df['links'] = spotify_df.apply(addyoutubelink,axis=1)
     print(spotify_df)
     for i in range(len(spotify_df['links'])): 
         yt_link = YouTube(spotify_df['links'][i]) 
@@ -58,11 +64,9 @@ def SpotifyBackend(cli_id,cli_secret,spotify_link):
 #UI 
 with gr.Blocks() as demo: 
     with gr.Tab("First Tab"): 
-        text_input1 = gr.Textbox(label='Credential ID') 
-        text_input2 = gr.Textbox(label='Credential Secret')
         text_input3 = gr.Textbox(label='Spotify Playlist Link') 
         dataframe_output1 = gr.Dataframe() 
         button1 = gr.Button("Fetch Spotify Data") 
-    button1.click(SpotifyBackend,inputs=[text_input1,text_input2,text_input3],
+    button1.click(SpotifyBackend,inputs=text_input3,
                   outputs=dataframe_output1)
 demo.launch(share=True)
