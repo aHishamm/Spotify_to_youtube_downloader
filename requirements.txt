@@ -1,4 +1,5 @@
 spotipy
 gradio 
 youtube-search
-pandas 
+pandas
+python-dotenv
