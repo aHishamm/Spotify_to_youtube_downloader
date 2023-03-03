@@ -7,6 +7,7 @@ from pytube import YouTube
 import datetime 
 from youtube_search import YoutubeSearch
 import gradio as gr 
+import swifter
 from dotenv import load_dotenv
 load_dotenv() 
 
@@ -47,8 +48,8 @@ def SpotifyBackend(spotify_link):
                                'Song_name':track_name_list,
                                'explicit':explicit_List,
                                'Song_duration':duration_List}) 
-    spotify_df['Song_duration'] = spotify_df['Song_duration'].apply(lambda x: (str(datetime.timedelta(minutes=x/60000))[2:7]))
-    spotify_df['links'] = spotify_df.apply(addyoutubelink,axis=1)
+    spotify_df['Song_duration'] = spotify_df['Song_duration'].swifter.apply(lambda x: (str(datetime.timedelta(minutes=x/60000))[2:7]))
+    spotify_df['links'] = spotify_df.swifter.apply(addyoutubelink,axis=1)
     print(spotify_df)
     for i in range(len(spotify_df['links'])): 
         yt_link = YouTube(spotify_df['links'][i]) 
